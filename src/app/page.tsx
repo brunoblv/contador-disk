@@ -1,28 +1,28 @@
-'use client'; // Indica que este é um componente do cliente
+"use client"; // Indica que este é um componente do cliente
 
-import { useState } from 'react';
-import { 
-  Container, 
-  Typography, 
-  TextField, 
-  Button, 
-  Box, 
-  List, 
-  ListItem, 
-  ListItemText, 
-  Paper 
-} from '@mui/material';
+import { useState } from "react";
+import {
+  Container,
+  Typography,
+  TextField,
+  Button,
+  Box,
+  List,
+  ListItem,
+  ListItemText,
+  Paper,
+} from "@mui/material";
 
 export default function Home() {
-  const [texto, setTexto] = useState('');
+  const [texto, setTexto] = useState("");
   const [resultado, setResultado] = useState<[string, number][] | null>(null);
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
 
-    const response = await fetch('/api/processar-musicas', {
-      method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
+    const response = await fetch("/api/processar-musicas", {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
       body: JSON.stringify({ texto }),
     });
 
@@ -37,7 +37,8 @@ export default function Home() {
           Calculadora de Pontuação de Músicas
         </Typography>
         <Typography variant="body1" align="center" sx={{ mb: 3 }}>
-          Cole suas músicas no campo abaixo e clique em "Processar" para ver as mais pontuadas.
+          Cole suas músicas no campo abaixo e clique em &quot;Processar&quot;
+          para ver as mais pontuadas.
         </Typography>
 
         <Box component="form" onSubmit={handleSubmit} sx={{ mb: 4 }}>
