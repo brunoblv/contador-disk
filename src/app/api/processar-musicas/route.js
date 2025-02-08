@@ -77,7 +77,7 @@ function calcularPontuacaoPush(texto) {
             } else {
                 scores[key] = points;
             }
-        } catch (error) {
+        } catch {
             console.log(`Entrada inválida: ${trimmedLine}`);
         }
     });
