@@ -52,7 +52,7 @@ function calcularPontuacaoDiskMTV(texto) {
 
     return Array.from(pontuacaoMusicas.entries())
         .sort((a, b) => b[1] - a[1])
-        .slice(0, 200);
+        .slice(0, 30);
 }
 
 function calcularPontuacaoPush(texto) {
@@ -64,14 +64,17 @@ function calcularPontuacaoPush(texto) {
         if (!trimmedLine) return;
 
         try {
-            const [positionStr, rest] = trimmedLine.split(' ', 2);
-            const position = parseInt(positionStr.substring(1));
+            const [positionStr, ...rest] = trimmedLine.split(' ');
+            if (!positionStr || rest.length === 0) {
+                console.log(`Entrada inválida: ${trimmedLine}`);
+                return;
+            }
 
-            const [artist, song] = rest.split(' - ', 2);
+            const position = parseInt(positionStr.replace('#', ''));
+            const key = rest.join(' ').trim();
 
             const points = Math.max(0, maxPoints - (position - 1));
 
-            const key = `${artist} - ${song}`;
             if (scores[key]) {
                 scores[key] += points;
             } else {
