@@ -1,6 +1,6 @@
 // src/app/api/processar-musicas/route.js
 export async function POST(request) {
-    const { texto } = await request.json();
+    const { texto, selecao } = await request.json();
 
     if (!texto) {
         return new Response(JSON.stringify({ error: 'Nenhum texto enviado.' }), {
@@ -9,6 +9,20 @@ export async function POST(request) {
         });
     }
 
+    let top30;
+    if (selecao === 'push') {
+        top30 = calcularPontuacaoPush(texto);
+    } else {
+        top30 = calcularPontuacaoDiskMTV(texto);
+    }
+
+    return new Response(JSON.stringify({ musicas: top30 }), {
+        status: 200,
+        headers: { 'Content-Type': 'application/json' },
+    });
+}
+
+function calcularPontuacaoDiskMTV(texto) {
     const pontuacaoMusicas = new Map();
     const regexExtra = /\s+\d+\(×\d+\)\s+\d+|\s+\d+\s+\d+/;
 
@@ -36,12 +50,39 @@ export async function POST(request) {
         }
     });
 
-    const top30 = Array.from(pontuacaoMusicas.entries())
+    return Array.from(pontuacaoMusicas.entries())
         .sort((a, b) => b[1] - a[1])
         .slice(0, 200);
+}
 
-    return new Response(JSON.stringify({ musicas: top30 }), {
-        status: 200,
-        headers: { 'Content-Type': 'application/json' },
+function calcularPontuacaoPush(texto) {
+    const scores = {};
+    const maxPoints = 20;
+
+    texto.split('\n').forEach((line) => {
+        const trimmedLine = line.trim();
+        if (!trimmedLine) return;
+
+        try {
+            const [positionStr, rest] = trimmedLine.split(' ', 2);
+            const position = parseInt(positionStr.substring(1));
+
+            const [artist, song] = rest.split(' - ', 2);
+
+            const points = Math.max(0, maxPoints - (position - 1));
+
+            const key = `${artist} - ${song}`;
+            if (scores[key]) {
+                scores[key] += points;
+            } else {
+                scores[key] = points;
+            }
+        } catch (error) {
+            console.log(`Entrada inválida: ${trimmedLine}`);
+        }
     });
+
+    return Object.entries(scores)
+        .sort((a, b) => b[1] - a[1])
+        .slice(0, 30);
 }

@@ -1,5 +1,5 @@
-function calcularPontuacao(texto) {
-    const pontuacaoMusicas = new Map(); // Usamos um Map para armazenar as pontuações
+function calcularPontuacao(texto: string): [string, number][] {
+    const pontuacaoMusicas = new Map<string, number>(); // Usamos um Map para armazenar as pontuações
 
     // Regex para remover qualquer número ou texto extra no final das linhas
     const regexExtra = /\s+\d+\(×\d+\)\s+\d+|\s+\d+\s+\d+/;
@@ -42,7 +42,7 @@ function calcularPontuacao(texto) {
 
         // Soma a pontuação no Map
         if (pontuacaoMusicas.has(chave)) {
-            pontuacaoMusicas.set(chave, pontuacaoMusicas.get(chave) + pontos);
+            pontuacaoMusicas.set(chave, pontuacaoMusicas.get(chave)! + pontos);
         } else {
             pontuacaoMusicas.set(chave, pontos);
         }
@@ -56,16 +56,15 @@ function calcularPontuacao(texto) {
     return top30;
 }
 
-// Exemplo de uso
-const texto = `
-1 – Artista A – Música X 1(×2) 3
-2 – Artista B – Música Y 2(×1) 4
-3 – Artista C – Música Z 3(×3) 5
-`;
+// Função para capturar o texto do campo de entrada e calcular a pontuação
+function processarTexto() {
+    const texto = (document.getElementById('campoTexto') as HTMLTextAreaElement).value;
+    const resultado = calcularPontuacao(texto);
+    console.log("Top 30 músicas que mais pontuaram:");
+    resultado.forEach(([musica, pontos], index) => {
+        console.log(`${index + 1}. ${musica} - ${pontos} pontos`);
+    });
+}
 
-const resultado = calcularPontuacao(texto);
-console.log("Músicas que mais pontuaram:");
-resultado.forEach(([musica, pontos], index) => {
-    console.log(`${index + 1}. ${musica} - ${pontos} pontos`);
-});
-
+// Exemplo de uso no front-end
+document.getElementById('botaoProcessar')?.addEventListener('click', processarTexto);
