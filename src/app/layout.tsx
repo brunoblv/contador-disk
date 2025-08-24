@@ -13,19 +13,11 @@ const geistMono = Geist_Mono({
 });
 
 export const metadata: Metadata = {
-  title: "Contador Disk MTV",
-  description: "Calculadora de pontuação para músicas do grupo Disk MTV",
+  title: "🎵 Disk MTV - Calculadora de Pontuação",
+  description:
+    "Calculadora de pontuação para músicas do grupo Disk MTV. Descubra suas músicas mais pontuadas!",
   icons: {
-    icon: [
-      {
-        url: "/mtv-logo.svg",
-        type: "image/svg+xml",
-      },
-      {
-        url: "/favicon.ico",
-        type: "image/x-icon",
-      },
-    ],
+    icon: "/mtv-logo.svg",
     shortcut: "/mtv-logo.svg",
     apple: "/mtv-logo.svg",
   },

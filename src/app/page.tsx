@@ -26,6 +26,10 @@ import {
   Slide,
   useTheme,
   alpha,
+  IconButton,
+  Tooltip,
+  Snackbar,
+  Alert,
 } from "@mui/material";
 import {
   MusicNote,
@@ -33,6 +37,7 @@ import {
   PlayArrow,
   Star,
   EmojiEvents,
+  ContentCopy,
 } from "@mui/icons-material";
 
 export default function Home() {
@@ -40,6 +45,8 @@ export default function Home() {
   const [resultado, setResultado] = useState<[string, number][] | null>(null);
   const [selecao, setSelecao] = useState("disk_mtv");
   const [loading, setLoading] = useState(false);
+  const [snackbarOpen, setSnackbarOpen] = useState(false);
+  const [snackbarMessage, setSnackbarMessage] = useState("");
   const theme = useTheme();
 
   const handleSubmit = async (e: React.FormEvent) => {
@@ -74,6 +81,38 @@ export default function Home() {
     if (index === 1) return theme.palette.grey[400];
     if (index === 2) return theme.palette.warning.dark;
     return theme.palette.primary.main;
+  };
+
+  const formatTableForCopy = () => {
+    if (!resultado || resultado.length === 0) return "";
+
+    const totalPoints = getTotalPoints();
+
+    return resultado
+      .map(([musica, pontos], index) => {
+        const percentage = totalPoints > 0 ? (pontos / totalPoints) * 100 : 0;
+        return `#${
+          index + 1
+        }. ${musica} - ${pontos} Pontos - ${percentage.toFixed(2)}%`;
+      })
+      .join("\n");
+  };
+
+  const handleCopyTable = async () => {
+    try {
+      const formattedText = formatTableForCopy();
+      await navigator.clipboard.writeText(formattedText);
+      setSnackbarMessage("Tabela copiada com sucesso!");
+      setSnackbarOpen(true);
+    } catch (error) {
+      console.error("Erro ao copiar:", error);
+      setSnackbarMessage("Erro ao copiar a tabela");
+      setSnackbarOpen(true);
+    }
+  };
+
+  const handleCloseSnackbar = () => {
+    setSnackbarOpen(false);
   };
 
   return (
@@ -251,15 +290,36 @@ export default function Home() {
                   color: "white",
                 }}
               >
-                <Box sx={{ display: "flex", alignItems: "center", gap: 2 }}>
-                  <EmojiEvents sx={{ fontSize: 32 }} />
-                  <Typography
-                    variant="h5"
-                    component="h2"
-                    sx={{ fontWeight: 600 }}
-                  >
-                    Ranking das Músicas Mais Pontuadas
-                  </Typography>
+                <Box
+                  sx={{
+                    display: "flex",
+                    alignItems: "center",
+                    justifyContent: "space-between",
+                  }}
+                >
+                  <Box sx={{ display: "flex", alignItems: "center", gap: 2 }}>
+                    <EmojiEvents sx={{ fontSize: 32 }} />
+                    <Typography
+                      variant="h5"
+                      component="h2"
+                      sx={{ fontWeight: 600 }}
+                    >
+                      Ranking das Músicas Mais Pontuadas
+                    </Typography>
+                  </Box>
+                  <Tooltip title="Copiar tabela formatada">
+                    <IconButton
+                      onClick={handleCopyTable}
+                      sx={{
+                        color: "white",
+                        "&:hover": {
+                          background: "rgba(255, 255, 255, 0.1)",
+                        },
+                      }}
+                    >
+                      <ContentCopy />
+                    </IconButton>
+                  </Tooltip>
                 </Box>
                 <Typography variant="body2" sx={{ mt: 1, opacity: 0.9 }}>
                   {resultado.length} músicas processadas •{" "}
@@ -311,7 +371,7 @@ export default function Home() {
                         align="center"
                         sx={{ fontWeight: 700, fontSize: "1rem" }}
                       >
-                        % do Top 30
+                        Porcentagem
                       </TableCell>
                     </TableRow>
                   </TableHead>
@@ -423,6 +483,21 @@ export default function Home() {
           </Fade>
         )}
       </Container>
+
+      <Snackbar
+        open={snackbarOpen}
+        autoHideDuration={6000}
+        onClose={handleCloseSnackbar}
+        anchorOrigin={{ vertical: "bottom", horizontal: "left" }}
+      >
+        <Alert
+          onClose={handleCloseSnackbar}
+          severity="success"
+          sx={{ width: "100%" }}
+        >
+          {snackbarMessage}
+        </Alert>
+      </Snackbar>
     </Box>
   );
 }
