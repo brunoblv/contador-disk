@@ -205,7 +205,9 @@ export default function Home() {
                 sx={{
                   "& .MuiFormControlLabel-root": {
                     mr: 3,
+                    mb: 1,
                   },
+                  flexWrap: "wrap",
                 }}
               >
                 <FormControlLabel
@@ -225,6 +227,16 @@ export default function Home() {
                     <Box sx={{ display: "flex", alignItems: "center", gap: 1 }}>
                       <TrendingUp color="secondary" />
                       <Typography>Push</Typography>
+                    </Box>
+                  }
+                />
+                <FormControlLabel
+                  value="disk_mtv_crownnote"
+                  control={<Radio color="warning" />}
+                  label={
+                    <Box sx={{ display: "flex", alignItems: "center", gap: 1 }}>
+                      <Star color="warning" />
+                      <Typography>Disk MTV (Pontuação Crownnote)</Typography>
                     </Box>
                   }
                 />
@@ -323,8 +335,12 @@ export default function Home() {
                 </Box>
                 <Typography variant="body2" sx={{ mt: 1, opacity: 0.9 }}>
                   {resultado.length} músicas processadas •{" "}
-                  {selecao === "disk_mtv" ? "Disk MTV" : "Push"} • Porcentagem
-                  baseada na soma do Top 30
+                  {selecao === "disk_mtv"
+                    ? "Disk MTV"
+                    : selecao === "disk_mtv_crownnote"
+                    ? "Disk MTV (Pontuação Crownnote)"
+                    : "Push"}{" "}
+                  • Porcentagem baseada na soma dos pontos
                 </Typography>
               </Box>
 
